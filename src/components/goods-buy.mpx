@@ -1,0 +1,111 @@
+<template>
+  <view class="list">
+    <!-- 商品名字 -->
+    <view class="food-name">{{option.name}}</view>
+
+    <!-- 商品价格 -->
+    <view class="food-mid">
+      <view class="food-price">￥{{option.price}}/件</view>
+    <!-- 商品步进器 -->
+      <view class="food-btn">
+        <button class="participate" wx:if="{{option.quantity==0}}" bind:tap="onplus">参与购买</button>
+        <van-stepper
+          bind:minus="onminus"
+          bind:plus="onplus"
+          wx:if="{{option.quantity>0}}"
+          plus-class="plus"
+          value="{{option.quantity||0}}"
+          min="0"
+        ></van-stepper>
+      </view>
+    </view>
+
+    <!-- 商品库存已售 -->
+    <view class="food-sold">
+      <text class="sold">已售 {{option.sold||0}} 件</text>
+      <text class="inventory">库存 {{option.inventory||0}} 件</text>
+    </view>
+  </view>
+</template>
+
+<script>
+import { createComponent } from "@mpxjs/core";
+
+Component({
+  data: {},
+  properties: {
+    option: {
+      type: Object
+    }
+  },
+  methods: {
+    onplus() {
+      this.data.option.quantity++;
+      this.setData({
+        option: this.data.option
+      });
+    },
+    onminus() {
+      let quantity = this.data.option.quantity;
+      quantity <= 0 ? (quantity = 0) : quantity--;
+      this.data.option.quantity = quantity;
+      this.setData({
+        option: this.data.option
+      });
+    }
+  }
+});
+</script>
+
+
+<style>
+.list {
+  width: 100%;
+  height: 300rpx;
+  padding: 30rpx;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+.food-name {
+  line-height: 100rpx;
+  font-size: 40rpx;
+}
+.food-price {
+  line-height: 40rpx;
+  font-size: 32rpx;
+  color: #ea8938;
+}
+.food-sold {
+  line-height: 120rpx;
+  color: #a4a4a4;
+}
+.inventory {
+  margin-left: 60rpx;
+}
+.food-mid{
+  display: flex;
+  justify-content:space-between
+}
+
+.plus {
+  background-color: #fe6507;
+}
+.participate {
+  background-color: #fe6507;
+  width: 180rpx;
+  height: 60rpx;
+  font-size: 30rpx;
+  color: white;
+  line-height: 60rpx;
+}
+</style>
+
+<script type="application/json">
+  {
+    "component": true,
+    "usingComponents": {
+      "van-stepper": "vant-weapp/dist/stepper"
+    }
+  }
+</script>

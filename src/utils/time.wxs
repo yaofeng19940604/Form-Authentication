@@ -1,0 +1,25 @@
+// val1代表目标时间,val2代表设定时间(默认是现在时间)
+elapse = function (val1, val2 = new Date().getTime()) {
+    let dtime = val2 - val1;
+    if (dtime < 0) {
+      return '未来'
+    }
+  dtime =
+    dtime / 60 < 1 ?
+    parseInt(dtime % 60) + "秒前" :
+    dtime / 3600 < 1 ?
+    parseInt(dtime / 60) + "分钟前" :
+    dtime / (3600 * 24) < 1 ?
+    parseInt(dtime / 3600) + "小时前" :
+    dtime / (3600 * 24 * 30) < 1 ?
+    parseInt(dtime / (3600 * 24)) + "天前" :
+    dtime / (3600 * 24 * 365) < 1 ?
+    parseInt(dtime / (3600 * 24 * 30)) + "月前" :
+    parseInt(dtime / (3600 * 24 * 365)) + "年前";
+  return dtime;
+}
+
+
+module.exports = {
+  elapse
+}

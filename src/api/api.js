@@ -3,6 +3,8 @@ import mpx from '@mpxjs/core'
 
 class API {
   constructor () {
+    this.env = 'default';
+
     ['delete', 'get', 'head', 'options', 'trace', 'post', 'put', 'patch'].forEach((method) => {
       API.prototype[method] = function (url, data, config) {
         return this.request({
@@ -17,7 +19,7 @@ class API {
 
   // 获取配置
   config () {
-    return API._config.default
+    return API._config[this.env]
   }
 
   // 网络请求
@@ -31,7 +33,7 @@ class API {
       header: {
         ...(this.config().headers)
       },
-      complete: function () {
+      complete() {
         options.complete && options.complete()
         wx.hideNavigationBarLoading()
       }

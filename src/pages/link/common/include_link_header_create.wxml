@@ -13,9 +13,9 @@
 
 <!-- 标题和内容 -->
 <van-cell-group border="{{false}}">
-  <van-field name="title" placeholder="接龙主题" required="{{ validateResult.title }}" error-message="{{validateResult.title}}"  data-key="title" data-rule="title" value="{{link.title}}" bind:change="onChange" bind:blur="onBlur"/>
-  <van-field type="textarea" placeholder="说两句，让大家更积极的参与您的接龙。" border="{{false}}" data-key="content.text" value="{{link.content.text}}"autosize bind:change="onChange" />
+  <van-field name="title" placeholder="接龙主题" required="{{ validateResult.title }}" error-message="{{validateResult.title}}"  data-key="title" name="title" value="{{link.title}}" bind:change="onChange" bind:blur="onBlur"/>
+  <van-field type="textarea" placeholder="说两句，让大家更积极的参与您的接龙。" border="{{false}}" data-key="content" name="content" value="{{link.content}}" autosize bind:change="onChange" />
 </van-cell-group>
 
 <!-- 图片 -->
-<em-images value="{{[]}}" editable data-key="content.images" bind:change="onChange"/>
+<em-images value="{{[]}}" editable data-key="images" bind:change="onChange"/>

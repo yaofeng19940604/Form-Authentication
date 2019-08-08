@@ -16,4 +16,4 @@
 <text wx:if="{{link.purchase.content}}">{{link.purchase.content}}</text>
 
 <!-- 图片 -->
-<em-images value="{{link.content.images}}"/>
+<!-- <em-images value="{{link.content.images}}"/> -->

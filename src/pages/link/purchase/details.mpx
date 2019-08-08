@@ -17,9 +17,8 @@
       <!-- 发起人 -->
 
       <!-- 接龙用户列表 -->
+      <em-link-follow />
     </van-cell-group>
-
-  </view>
 
     <van-goods-action>
       <van-goods-action-icon icon="shop-o" text="管理" />
@@ -63,6 +62,7 @@
   {
     "usingComponents": {
       "em-images": "../../../components/images",
+      "em-link-follow": "../common/link-follow",
       "van-cell-group": "vant-weapp/lib/cell-group",
       "van-cell": "vant-weapp/lib/cell",
       "van-field": "vant-weapp/lib/field",

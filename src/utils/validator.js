@@ -143,9 +143,13 @@ class Validator {
      * validateRule('13611113333', 'phone', message: "输入电话方便快递员联系您。")
      * 
      * return：
+     * 错误
      * {result: false, rule: 'required', message: "输入电话方便快递员联系您。"}
+     * 正确
+     * {result: true, rule: 'required'}
      */
     validateRule(data, rule, message) {
+        if(!data){data=""}
         let res = {rule};
         res.result = this[rule](data);
         
@@ -169,7 +173,10 @@ class Validator {
      * ])
      * 
      * return：
+     * 错误
      * {result: false, rule: 'required' , message: "输入电话方便快递员联系您。"}
+     * 正确
+     * {result: true,message: null}
      */
     validateRules(data, rules) {
         for (const item of rules) {
@@ -178,7 +185,76 @@ class Validator {
                 return res
             }
         }
-        return {result: true}
+        return {result: true, message: null}
+    }
+    
+    // key="goods[0].specification"
+    // 即数据路径
+    // validateList = {
+    //     'title': [
+    //       { rule: 'required', message: '此处为必填项，请输入主题' },
+    //     ],
+    //     'goods\\[\\d+\\]\\.name': [
+    //       { rule: 'required', message: '此处为必填项，请输入商品名称' },
+    //     ]
+    // }
+    // 返回值
+    // 正确
+    // return {
+    //     result: true,
+    //     key："goods[0].specification",
+    //     message: null
+    // }
+    // 错误
+    // {
+        // result: false,
+    //     key："goods[0].specification",
+    //     rule: 'required' ,
+    //     message: "输入电话方便快递员联系您。"
+    // }
+    validateFormItem(key,value,validateList){
+        // 数据可能需要验证，也可能不需要验证所以
+        // rules可能为空
+        let rules = null
+        for(let ruleKey in validateList){
+            let re = new RegExp(ruleKey,"i")
+            if(re.test(key)){
+                rules = validateList[ruleKey]
+                break
+            }
+        }
+        // 如果没查到规则，即数据不需要验证
+        if(!rules){
+            return {
+                result: true,
+                key,
+                message: null
+            }
+        }
+        let validate = this.validateRules(value,rules)
+        validate.key = key
+        return validate
+    }
+    //  dataList = {
+        //     "content.text"：null,
+        //     'delivery[0].address':null,
+        //     "goods[0].specification":"500g"
+        // }
+    //返回值{
+    //     "content.text":null,
+    //     'delivery[0].address':'输入地址方便快递员联系您',
+    //     "goods[0].specification":"此处为必填项。"
+    // }
+    // 返回值
+    validateForm(dataList,validateList){
+        let result = {}
+        for(let key in dataList){
+            let val = dataList[key]
+            let validateItem = this.validateFormItem(key,val,validateList)
+            // console.log(validateItem)
+            result[key] = validateItem.message
+        }
+        return result
     }
 }
 

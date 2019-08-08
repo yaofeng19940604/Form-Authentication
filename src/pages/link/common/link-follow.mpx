@@ -1,0 +1,118 @@
+<template minapp='native' xlang='wxml'>
+  <view class="link-follow">
+    <view class="floorcount-wrap">
+      <view class="cout">320</view>
+      <view class="txt">楼</view>
+    </view>
+    <view class="order-info">
+      <view class="hd">
+        <view class="user-img">
+          <image src />
+        </view>
+        <view class="user-name">Li-kang</view>
+        <view class="time">{{Ctime}}</view>
+        <view class="total-price">￥0.00</view>
+      </view>
+      <view class="goods-list">
+        <view class="item">
+          <view class="item-name">请+接龙圈圈主微信号:546*1</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import { createComponent } from "@mpxjs/core";
+createComponent({
+  properties: {
+    val: Array
+  },
+  data: {},
+  computed: {
+    Ctime() {
+      // let nowdata = new Date();
+      // let dtime = nowdata.getTime() - val.time;
+      let dtime = 3600 * 24 * 30;
+      dtime =
+        dtime / 60 < 1
+          ? parseInt(dtime % 60) + "秒前"
+          : dtime / 3600 < 1
+          ? parseInt(dtime / 60) + "分钟前"
+          : dtime / (3600 * 24) < 1
+          ? parseInt(dtime / 3600) + "小时前"
+          : dtime / (3600 * 24 * 30) < 1
+          ? parseInt(dtime / (3600 * 24)) + "天前"
+          : parseInt(dtime / (3600 * 24 * 30)) + "月前";
+      return dtime;
+    }
+  },
+  pageShow() {
+    // 所在页面显示之后就会执行一次
+    console.log("page show");
+  },
+  pageHide() {
+    // 页面切入后台执行
+    console.log("page hide");
+  },
+  methods: {}
+});
+</script>
+
+<style lang="less">
+.link-follow {
+  display: flex;
+  .floorcount-wrap {
+    flex-grow: 1;
+    display: flex;
+    position: relative;
+    align-items: center;
+    .txt {
+      font-size: 20rpx;
+      position: relative;
+      padding-left: 5rpx;
+    }
+  }
+  .goods-list {
+    .item-name {
+      font-size: 26rpx;
+      color: rgb(126, 126, 126);
+    }
+  }
+}
+
+.order-info {
+  flex-grow: 320;
+  padding-left: 15rpx;
+  .hd {
+    display: flex;
+    margin-bottom: 15rpx;
+  }
+  .user-img {
+    width: 45rpx;
+    height: 45rpx;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: deeppink;
+    position: relative;
+  }
+  .total-price {
+    margin-left: auto;
+  }
+  .user-name {
+    margin-left: 15rpx;
+  }
+  .time {
+    font-size: 26rpx;
+    color: rgb(185, 185, 185);
+    line-height: 42rpx;
+    margin-left: 15rpx;
+  }
+}
+</style>
+<script  type='application/json' lang='json'>
+{ 
+ "component": true
+}
+</script>
+
