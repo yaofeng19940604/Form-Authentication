@@ -13,7 +13,7 @@ class User extends API {
         }
 
         // 用code登录到我们自己的服务器，并获取登录token。
-        return this.post(`user/wechat/login`, p)
+        return this.post(`/user/wechat/login`, p)
       })
       .then((res) => {
         // 设置 token
@@ -34,7 +34,7 @@ class User extends API {
   // 微信登录
   getUser () {
     // 微信登录
-    return this.get(`user`)
+    return this.get(`/user`)
       .then((res) => {
         // 设置 token
         console.log('getUser', res.data)
@@ -46,6 +46,11 @@ class User extends API {
   bearer (token) {
     this.config().headers.Authorization = `Bearer ${token}`
     console.log('login', token)
+  }
+
+  // 更新用户信息
+  updateUserInfo() {
+    
   }
 }
 

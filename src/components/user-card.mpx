@@ -1,0 +1,82 @@
+<template>
+  <view class="user-card">
+    <van-icon wx:if="{{showSetting}}" name="setting" class="setting" bind:click="onSettingTap"/>
+    <!-- <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo"> 获取头像昵称 </button> -->
+    <!-- <block wx:else> -->
+      <view class="avatar" bindtap="onAvatarTap"><open-data type="userAvatarUrl"/></view>
+      <open-data type="userNickName" class="nickname bold"></open-data>
+    <!-- </block> -->
+  </view>
+</template>
+
+<script>
+import { createComponent } from "@mpxjs/core";
+
+createComponent({
+  /**
+   * 组件的属性列表
+   */
+  properties: {
+    showSetting: Boolean
+  },
+
+  /**
+   * 组件的初始数据
+   */
+  data: {},
+
+  /**
+   * 组件的方法列表
+   */
+  methods: {
+    onAvatarTap: function() {
+      this.triggerEvent("avatartap", {}, {});
+    },
+
+    onSettingTap: function() {
+      this.triggerEvent("settingtap", {}, {});
+    }
+  }
+});
+</script>
+
+
+<style lang="less">
+/* 用户头像 */
+.user-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: white;
+
+  .avatar {
+    width: 120rpx;
+    height: 120rpx;
+    border-radius: 50%;
+    /* border: 1px #f74c31 solid; */
+    overflow: hidden;
+    margin: 90rpx auto 10rpx;
+  }
+  
+  .nickname {
+    margin-bottom: 20rpx;
+  }
+  
+  .setting {
+    position: absolute;
+    align-self: flex-start;
+    padding: 20rpx;
+    font-size: 36rpx;
+    color: #999;
+  }
+}
+</style>
+
+<script type="application/json">
+{
+  "component": true,
+  "usingComponents": {
+    "van-icon": "vant-weapp/dist/icon"
+  }
+}
+</script>

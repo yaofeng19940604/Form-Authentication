@@ -217,7 +217,7 @@ class Validator {
         // rules可能为空
         let rules = null
         for(let ruleKey in validateList){
-            let re = new RegExp(ruleKey,"i")
+            let re = new RegExp(`^${ruleKey}$`,"i")
             if(re.test(key)){
                 rules = validateList[ruleKey]
                 break
@@ -235,6 +235,7 @@ class Validator {
         validate.key = key
         return validate
     }
+
     //  dataList = {
         //     "content.text"：null,
         //     'delivery[0].address':null,
@@ -245,13 +246,11 @@ class Validator {
     //     'delivery[0].address':'输入地址方便快递员联系您',
     //     "goods[0].specification":"此处为必填项。"
     // }
-    // 返回值
     validateForm(dataList,validateList){
         let result = {}
         for(let key in dataList){
             let val = dataList[key]
             let validateItem = this.validateFormItem(key,val,validateList)
-            // console.log(validateItem)
             result[key] = validateItem.message
         }
         return result

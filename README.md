@@ -1,4 +1,5 @@
 # xbdj-mp
+
 鲜宝到家小程序
 
 ### 安装 MPX
@@ -19,7 +20,6 @@ npm run watch
 3. 配置小程序根目录，在`project.config`添加配置
 
 ```json
-"miniprogramRoot": "dist/",
 "setting": {
   "urlCheck": false,
   "es6": true,
@@ -33,7 +33,7 @@ npm run watch
 },
 ```
 
-4. 用小程序 IDE 打开项目
+4. 用小程序 IDE 打开`dist`项目目录
 
 
 ### 安装 sass-loader 
@@ -45,6 +45,7 @@ npm install sass-loader node-sass --save-dev
 ### 安装 Vant
 
 1. 在项目目录下正常安装 `vant-weapp`
+
 > 在 `MPX` 中使用第三方包，不需要构建 `npm` ，`MPX` 会自动检查你使用的 `npm` 包，并按需编译到 `dist` 目录中。
 
 ```shell
@@ -58,4 +59,3 @@ npm i vant-weapp -S
   "van-button": "vant-weapp/dist/button"
 }
 ```
-

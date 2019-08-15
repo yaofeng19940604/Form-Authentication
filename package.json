@@ -17,8 +17,8 @@
   "author": "li-kang <likang2008@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "@mpxjs/api-proxy": "^2.0.0",
-    "@mpxjs/core": "^2.0.0",
+    "@mpxjs/api-proxy": "^2.2.0",
+    "@mpxjs/core": "^2.2.0",
     "vant-weapp": "^0.5.15"
   },
   "devDependencies": {

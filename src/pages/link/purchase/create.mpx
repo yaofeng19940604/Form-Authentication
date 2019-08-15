@@ -1,10 +1,11 @@
 <template minapp='native' xlang='wxml'>
   <view class="container">
     <import src="template_goods_edit.wxml"></import>
+
     <form bindsubmit="onSubmit">
       <include src="../common/include_link_header_create.wxml" />
       <van-cell-group title="团购商品列表">
-        <template is="goods-edit" wx:for="{{link.goods}}" wx:key="index" data="{{ goods:link.goods, validateResult,index }}"/>
+        <template is="goods-edit" wx:for="{{link.goods}}" wx:key="index" data="{{ goods:link.goods, validate,index }}"/>
       </van-cell-group>
       <view class="more" catchtap="addGoods">+添加更多商品</view>
       <van-cell-group title="接龙设置">
@@ -20,31 +21,31 @@
           wx:for="{{link.delivery}}" wx:key="{{index}}"
           label="提货点"
           placeholder="请输入自提点"
-          icon="location"
-          data-key="delivery[{{index}}].address"
-          name="delivery[{{index}}].address"
-          value="{{ link.delivery[index].address }}"
-          required="{{validateResult.delivery[index].address}}" 
-          error-message="{{validateResult.delivery[index].address}}"
+          icon="{{ link.delivery[index].name?'cross':'location'}}"
+          data-key="delivery[{{index}}].name"
+          data-index="{{index}}"
+          value="{{ link.delivery[index].name }}"
           bind:change="onChange"
-          bind:blur="onBlur"
-          bind:click-icon="setLocation"
-          bind:focus="onLocationFocus"
-        ></van-field>
+          bind:click-icon="{{link.delivery[index].name?'onDelLocation':'onSetLocation'}}"
+          bind:focus="{{link.delivery[index].name?'':'onSetLocation'}}"
+        />
       </van-cell-group>
-      <view class="more" catchtap="addLocation">+添加提货点</view>
+      <view class="more" catchtap="onAddLocation">+添加提货点</view>
       <button type="primary" open-type="getUserInfo" style="margin-top:20rpx;" form-type="submit">发布接龙</button>
     </form>
   </view>
 </template>
 
 <script>
-import mpx from "@mpxjs/core";
+import mpx, {createPage} from "@mpxjs/core";
 // import Notify from 'vant-weapp/notify/notify'
 import Validator from "../../../utils/validator.js"
+// 引用api
+import link from '../../../api/link.js'
+let api = { link }
 
 const validator = new Validator()
-// 备注  ^goods\[\d+\]\.price$   \ 这个斜线用RegExp不识别，故改用通配符模糊查找
+// 备注  ^goods\[\d+\]\.price$
 // 更改  在字符串中  \   不被解析   需要输入 \\
 const validateList = {
   'title': [
@@ -63,21 +64,19 @@ const validateList = {
     { rule: 'required', message: '此处为必填项，请输入地址' },
   ],
 }
-Page({
+
+createPage({
   data: {
     link: {
+      id:"22",
       title: '',
       content: "",
-      images:[],
       goods: [{name: '西红柿', price: 300, specification: '500g'}],
       enable_express: false,
-      delivery: [{},{}],
+      delivery: [{}],
     },
-    validateResult: {
-      title: "",
-      goods: [{name:"", price:"", specification:""}],
-      delivery:[{address:""}]
-    },
+    validate: {},
+    images:[],
   },
 
   onChange(ev) {
@@ -87,78 +86,115 @@ Page({
     })
   },
 
+  onChangeImages(ev){
+    this.images = ev.detail
+    this.$forceUpdate(this.images)
+  },
+
   onBlur(ev){
     let { key }= ev.target.dataset
     let val = ev.detail.value
-    let validateRes = validator.validateFormItem(key,val,validateList)
-    this.setData({
-      [`validateResult.${validateRes.key}`]: validateRes.message
-    })
-    // console.log(this.data.validateResult)
+    let result = validator.validateFormItem(key,val,validateList)
+    this.validate[result.key] = result.message
+    this.$forceUpdate(this.validate)
+    // console.log(this.validate)
+    // 第一个console数据最新   第二个console数据滞后
+    // console.log(this.data.validate)
   },
 
   onSubmit(ev) {
     let dataList = ev.detail.value
-    let validateRes = validator.validateForm(dataList,validateList)
-    console.log(validateRes);
-    for(let key in validateRes){
-      this.setData({
-        [`validateResult.${key}`]: validateRes[key]
-      })
+    let result = validator.validateForm(dataList,validateList)
+    this.validate = result
+
+    let verify = true
+    for(let key in result){
+      if(result[key]){
+          verify = false;
+      }
     }
-    // console.log(this.data.validateResult)
-    // let images = this.data.link.content.images
-    // if(!images){
-    //   return this.data.link
-    // }
-    // // 更新临时图片地址
-    // for (let i = 0; i < images.length; i++) {
-    //   const item = images[i];
-    //   wx.cloud.uploadFile({
-    //     cloudPath: `temp/${i}.jpg`, // TODO: 设置目录路径
-    //     filePath: item
-    //   }).then((res) => {
-    //     // console.log(res)
-    //     images[i]=res.fileID
+    let link = this.link
+    // console.log(this.data.link)
+    // console.log(this.link)
+    // 不用setData  换成mpx封装的this进行数据监听刷新
+    // link 就得用this.link获取 变成了类似  mpx的属性了
+    // 反正不影响  就是做个笔记
+
+    // if(verify){
+    //   api.link.create(dataTest).then((res)=>{
+    //     console.log(res)
     //   })
     // }
-    // this.setData({
-    //   'link.content.images': this.data.link.content.images
+
+
+    // 以下仅仅是测试代码
+    // 获取失败   但是Postman软件发送能返回2
+    // let dataTest = {
+    //     "id": 12,
+    //     "title": "每日水果团（演示）3",
+    //     "content": "4加拿大车厘子和香蕉，喜欢吃的，一起来团吧。仅限新龙城用户购买。演示案例，不发货，不退款，请勿大额支付。不发货，不退款，请勿大额支付。不发货，不退款，请勿大额支付。",
+    //     "images_count": 3,
+    //     "goods": [
+    //         {"name": "加拿大车厘子12", "price": 1050, "specification": "3斤/份", "stock": 50 },
+    //         {"name": "香蕉", "price": 530, "specification": "5斤/份", "stock": 50 }
+    //     ],
+    //     "delivery": [{"name": "海淀区人民政府", "address": "北京市海淀区长春桥路17号", "latitude": 39.95933, "longitude": 116.29845}],
+    //     "enable_express": false,
+    //     "status": 1
+    // }
+    // console.log(api.link.create(dataTest))
+    // api.link.create(dataTest).then((res)=>{
+    //     console.log(res)
     // })
+    
+    // 图片数据更新完成
+    let images = this.images
+    if(!images){
+      return
+    }
+    // 更新临时图片地址
+    for (let i = 0; i < images.length; i++) {
+      const item = images[i];
+      wx.cloud.uploadFile({
+        cloudPath: `links/${link.id}/${i}.jpg`, // TODO: 设置目录路径
+        filePath: item
+      }).then((res) => {
+        images[i]=res.fileID
+      })
+    }
+    this.images = images;
+    this.$forceUpdate(this.images)
   },
 
   addGoods(){
-    let linkGoods = this.data.link.goods;
-    linkGoods.push({});
-    this.setData({
-      'link.goods':linkGoods,
+    this.link.goods.push({})
+  },
+
+  //获取位置
+  onSetLocation(ev) {
+    let { index } = ev.target.dataset;
+
+    mpx.chooseLocation().then(res => {
+      this.link.delivery[index] = res
     })
   },
-  onShow() {
-    // 所在页面显示之后就会执行一
-    console.log("page show");
+
+  //删除位置事件
+  onDelLocation(ev) {
+    if (this.link.delivery.length <= 1) {
+      this.link.delivery[0] = {}
+      return
+    }
+
+    let { index } = ev.target.dataset
+    this.link.delivery.splice(index, 1)
   },
-  onHide() {
-    // 页面切入后台执行
-    console.log("page hide");
+
+  //添加位置
+  onAddLocation() {
+    this.link.delivery.push({})
   },
-  methods: {
-    onSubmit() {
-      console.log(this.data.link)
-    },
-    /**
-     * 页面相关事件处理函数--监听用户下拉动作
-     */
-    onPullDownRefresh() {},
-    /**
-     * 页面上拉触底事件的处理函数
-     */
-    onReachBottom() {},
-    /**
-     * 用户点击右上角分享
-     */
-    onShareAppMessage() {}
-  }
+
 });
 </script>
 
